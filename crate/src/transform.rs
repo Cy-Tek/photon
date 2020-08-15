@@ -175,60 +175,6 @@ fn filter_type_from_sampling_filter(
     }
 }
 
-/// Resize an image on the web.
-///
-/// # Arguments
-/// * `img` - A PhotonImage.
-/// * `width` - New width.
-/// * `height` - New height.
-/// * `sampling_filter` - Nearest = 1, Triangle = 2, CatmullRom = 3, Gaussian = 4, Lanczos3 = 5
-#[cfg(target_arch = "wasm32")]
-#[wasm_bindgen]
-pub fn resizeimg_browser(
-    photon_img: &PhotonImage,
-    width: u32,
-    height: u32,
-    sampling_filter: SamplingFilter,
-) -> HtmlCanvasElement {
-    let sampling_filter = filter_type_from_sampling_filter(sampling_filter);
-    let dyn_img = helpers::dyn_image_from_raw(&photon_img);
-    let resized_img = image::ImageRgba8(image::imageops::resize(
-        &dyn_img,
-        width,
-        height,
-        sampling_filter,
-    ));
-
-    // TODO Check if in browser or Node.JS
-    let document = web_sys::window().unwrap().document().unwrap();
-    let canvas = document
-        .create_element("canvas")
-        .unwrap()
-        .dyn_into::<web_sys::HtmlCanvasElement>()
-        .unwrap();
-
-    canvas.set_width(resized_img.width());
-    canvas.set_height(resized_img.height());
-
-    let new_img_data = ImageData::new_with_u8_clamped_array_and_sh(
-        Clamped(&mut resized_img.raw_pixels()),
-        canvas.width(),
-        canvas.height(),
-    );
-
-    let ctx = canvas
-        .get_context("2d")
-        .unwrap()
-        .unwrap()
-        .dyn_into::<web_sys::CanvasRenderingContext2d>()
-        .unwrap();
-
-    // Place the new imagedata onto the canvas
-    ctx.put_image_data(&new_img_data.unwrap(), 0.0, 0.0);
-
-    return canvas;
-}
-
 /// Resize an image.
 ///
 /// # Arguments
@@ -236,7 +182,6 @@ pub fn resizeimg_browser(
 /// * `width` - New width.
 /// * `height` - New height.
 /// * `sampling_filter` - Nearest = 1, Triangle = 2, CatmullRom = 3, Gaussian = 4, Lanczos3 = 5
-#[cfg(not(target_arch = "wasm32"))]
 pub fn resize(
     photon_img: &PhotonImage,
     width: u32,
