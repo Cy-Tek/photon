@@ -182,6 +182,7 @@ fn filter_type_from_sampling_filter(
 /// * `width` - New width.
 /// * `height` - New height.
 /// * `sampling_filter` - Nearest = 1, Triangle = 2, CatmullRom = 3, Gaussian = 4, Lanczos3 = 5
+#[wasm_bindgen]
 pub fn resize(
     photon_img: &PhotonImage,
     width: u32,
