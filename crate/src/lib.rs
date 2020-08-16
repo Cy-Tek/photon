@@ -258,7 +258,7 @@ pub fn get_image_data(
 pub fn putImageData(
     canvas: HtmlCanvasElement,
     ctx: CanvasRenderingContext2d,
-    &mut new_image: PhotonImage,
+    new_image: &mut PhotonImage,
 ) {
     // Convert the raw pixels back to an ImageData object.
     let new_img_data = ImageData::new_with_u8_clamped_array_and_sh(
